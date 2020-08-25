@@ -1,9 +1,6 @@
 package mile.com.week2;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 
 /**
  * N叉树所有的操作
@@ -16,9 +13,8 @@ import java.util.Stack;
  */
 public class NNodeTree {
 
-
     /**
-     * 先遍历
+     * 先序遍历
      * @param root
      * @return
      */
@@ -40,6 +36,7 @@ public class NNodeTree {
                 continue;
             }
 
+            //压入栈的顺序为 最右边的孩子节点先入栈 保证在访问的时候 后访问
             for(int i=children.size() - 1; i>=0; i--){
                 stack.push(children.get(i));
             }
@@ -59,6 +56,90 @@ public class NNodeTree {
         }
 
         List<Integer> results = new ArrayList<>();
+        Stack<Node> stack = new Stack<>();
+        stack.push(root);
+
+        LinkedList<Integer> queue = new LinkedList<>();
+        while(!stack.isEmpty()){
+            Node currNode = stack.pop();
+            //队尾插入
+            queue.addFirst(currNode.val);
+            if(null == currNode.children){
+                continue;
+            }
+            for(Node child : currNode.children){
+                stack.push(child);
+            }
+        }
+
+        //队头先出  正好完成遍历结果的反转
+        while(!queue.isEmpty()){
+            results.add(queue.pollFirst());
+        }
+
+        return results;
+    }
+
+    /**
+     * 层序遍历
+     * @param root
+     * @return
+     */
+    public List<Integer> layeredorder(Node root){
+        if(null == root){
+            return new ArrayList<>();
+        }
+        List<Integer> results = new ArrayList<>();
+
+        Queue<Node> queue = new LinkedList<>();
+        queue.add(root);
+
+        while(!queue.isEmpty()){
+            Node currNode = queue.poll();
+            results.add(currNode.val);
+
+            if(null != currNode.children){
+                queue.addAll(currNode.children);
+            }
+        }
+
+        return results;
+    }
+
+    /**
+     * 基于层序遍历  返回每一层的节点 即:每一层的节点单独放在一个sub_list中单独返回
+     * 算法思想:还是基于层序遍历 只是在层序遍历时 需要将当前层内所有的节点单独放到一个独立的sub_list中
+     * 访问完一层就完整地添加到全局返回参数results中
+     * @param root
+     * @return
+     */
+    public List<List<Integer>> layeredOrderNodeReturn(Node root){
+        List<List<Integer>> results = new ArrayList<>();
+        if(null == root){
+            return results;
+        }
+
+        //当前层
+        List<Node> currentLayer = new ArrayList<>();
+        currentLayer.add(root);
+
+        while(!currentLayer.isEmpty()){
+            //当前层的下一层所有节点
+            List<Node> nextLayerList = new ArrayList<>();
+
+            List<Integer> subList = new ArrayList<>();
+            for(Node preNode : currentLayer){
+                //当前层节点全部放在subList中 以便分层保存各节点的值
+                subList.add(preNode.val);
+                //将当前层每个节点的孩子节点全部放入到nextLayerList
+                if(null != preNode.children){
+                    nextLayerList.addAll(preNode.children);
+                }
+            }
+
+            results.add(subList);
+            currentLayer = nextLayerList;
+        }
 
         return results;
     }
@@ -83,7 +164,17 @@ public class NNodeTree {
         Node root = new Node(1,oneLayerChildren);
 
         NNodeTree nNodeTree = new NNodeTree();
-            System.out.println(nNodeTree.preorder(root));
+        //前序遍历结果
+        System.out.println("前序遍历结果:" + nNodeTree.preorder(root));
+
+        //层序遍历结果
+        System.out.println("层序遍历结果:" + nNodeTree.layeredorder(root));
+
+        //按层返回每一层的节点
+        System.out.println("按层返回各层节点:" + nNodeTree.layeredOrderNodeReturn(root));
+
+        //后序遍历结果
+        System.out.println("后序遍历结果:" + nNodeTree.postorder(root));
     }
 
     static class Node {
