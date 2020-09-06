@@ -5,16 +5,40 @@ import java.util.*;
 /**
  * N叉树所有的操作
  * 1.广度优先遍历
- * 层序遍历
+ * 层序遍历:队列
  * 2.深度优先遍历
- * (1)前序
- * (2)后序
+ * (1)前序:栈
+ * (2)后序:栈
+ * 3.递归方式:@todo
  * Created by zhaofengying on 2020/8/23.
  */
 public class NNodeTree {
 
     /**
-     * 先序遍历
+     * 递归的dfs
+     * @param root
+     * @return
+     */
+    public List<Integer> dfs(Node root){
+        List<Integer> results = new ArrayList<>();
+
+        if(null == root){
+            return results;
+        }
+
+        results.add(root.val);
+
+        List<Node> children = root.children;
+        if(null != children && !children.isEmpty()){
+            for(Node child : children){
+                results.addAll(dfs(child));
+            }
+        }
+
+        return results;
+    }
+    /**
+     * 深度优先:先序遍历
      * @param root
      * @return
      */
@@ -46,7 +70,7 @@ public class NNodeTree {
     }
 
     /**
-     * 后续遍历
+     * 深度优先:后序遍历
      * @param root
      * @return
      */
@@ -165,7 +189,8 @@ public class NNodeTree {
 
         NNodeTree nNodeTree = new NNodeTree();
         //前序遍历结果
-        System.out.println("前序遍历结果:" + nNodeTree.preorder(root));
+        System.out.println("非递归前序遍历结果:" + nNodeTree.preorder(root));
+        System.out.println("递归前序遍历结果:" + nNodeTree.dfs(root));
 
         //层序遍历结果
         System.out.println("层序遍历结果:" + nNodeTree.layeredorder(root));

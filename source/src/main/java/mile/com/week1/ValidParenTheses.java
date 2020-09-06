@@ -35,12 +35,15 @@ public class ValidParenTheses {
 
         Deque<Character> stack = new LinkedList<Character>();
         for(int i=0; i<s.length(); i++){
+            //如果是左括号([{中的任意一个 则直接入栈
             Character currChar = s.charAt(i);
             if(!parentThesesMap.containsKey(currChar)){
                 stack.addLast(currChar);
                 continue;
             }
 
+            //currChar是右括号)]}其中的任意一个则在hash表中查找与其配对的左括号 并且查看栈顶元素是否
+            //是与其配对的左括号 如果是则栈顶元素出栈 否则直接返回false 即:括号不匹配
             Character topCh = stack.peekLast();
             if(!parentThesesMap.get(currChar).equals(topCh)){
                 return false;

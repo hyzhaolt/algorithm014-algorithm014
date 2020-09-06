@@ -16,11 +16,11 @@ import java.util.*;
  */
 public class BinaryTree {
     /**
-     * 递归地完成二叉树的前序遍历
+     * 递归地完成二叉树的前序遍历 根 左 右
      * @param root
      * @return
      */
-    public List<Integer> prorderTraversalRec(TreeNode root){
+    public List<Integer> preorderTraversalRec(TreeNode root){
         if(null == root){
             return new ArrayList<>();
         }
@@ -32,19 +32,19 @@ public class BinaryTree {
 
         //再访问左子树
         if(null != root.left){
-            results.addAll(prorderTraversalRec(root.left));
+            results.addAll(preorderTraversalRec(root.left));
         }
 
         //再访问右子树
         if(null != root.right){
-            results.addAll(prorderTraversalRec(root.right));
+            results.addAll(preorderTraversalRec(root.right));
         }
 
         return results;
     }
 
     /**
-     * 递归地完成二叉树的前序遍历
+     * 递归地完成二叉树的中序遍历
      * @param root
      * @return
      */
@@ -73,7 +73,7 @@ public class BinaryTree {
 
 
     /**
-     * 二叉树中序遍历 左-->根-->右
+     * 二叉树中序遍历(非递归实现) 左-->根-->右
      * @param root
      * @return
      */
@@ -108,7 +108,7 @@ public class BinaryTree {
     }
 
     /**
-     * 二叉树前序遍历
+     * 二叉树前序遍历(非递归实现)
      * @param root
      * @return
      */
@@ -155,6 +155,78 @@ public class BinaryTree {
             results.add(currNode.val);
             queue.add(currNode.left);
             queue.add(currNode.right);
+        }
+
+        return results;
+    }
+
+    /**
+     * https://leetcode-cn.com/problems/binary-tree-level-order-traversal/#/description
+     * 给你一个二叉树，请你返回其按 层序遍历 得到的节点值。 （即逐层地，从左到右访问所有节点）。
+     */
+    public List<List<Integer>> levelOrderTraversal(TreeNode node){
+        List<List<Integer>> results = new ArrayList<>();
+        List<TreeNode> currNodeList = new ArrayList<>();
+        currNodeList.add(node);
+
+        while(null != currNodeList && !currNodeList.isEmpty()){
+            List<Integer> currLevelList = new ArrayList<>();
+
+            List<TreeNode> nextLevelList = new ArrayList<>();
+            for(TreeNode currNode : currNodeList){
+                if(null == currNode){
+                    continue;
+                }
+                currLevelList.add(currNode.val);
+
+                nextLevelList.add(currNode.left);
+                nextLevelList.add(currNode.right);
+            }
+
+            if(!currLevelList.isEmpty()){
+                results.add(currLevelList);
+            }
+            currNodeList = nextLevelList;
+        }
+
+        return results;
+    }
+
+    /**
+     * 在二叉树的每一行中找到最大的值。
+     * 实质:按层从左到右返回每一层的节点的变种
+     * https://leetcode-cn.com/problems/find-largest-value-in-each-tree-row/#/description
+     * @param root
+     * @return
+     */
+    public List<Integer> largestValuesOfEachLevel(TreeNode root){
+        List<Integer> results = new ArrayList<>();
+        if(null == root){
+            return results;
+        }
+
+        List<TreeNode> currNodeList = new ArrayList<>();
+        currNodeList.add(root);
+
+        while(null != currNodeList && !currNodeList.isEmpty()){
+            int currMaxVal = Integer.MIN_VALUE;
+
+            List<TreeNode> nextLevelList = new ArrayList<>();
+            for(TreeNode currNode : currNodeList){
+                currMaxVal = currNode.val > currMaxVal ? currNode.val : currMaxVal;
+                if(null != currNode.left){
+                    nextLevelList.add(currNode.left);
+                }
+
+                if(null != currNode.right){
+                    nextLevelList.add(currNode.right);
+                }
+            }
+
+            if(!currNodeList.isEmpty()){
+                results.add(currMaxVal);
+            }
+            currNodeList = nextLevelList;
         }
 
         return results;
@@ -224,8 +296,11 @@ public class BinaryTree {
         TreeNode root = tree.buildABinaryTree(nums);
 
         System.out.println("层序遍历结果(非递归):" + tree.layeredTraversal(root));
-        System.out.println("前序遍历结果(递归):" + tree.prorderTraversalRec(root));
-        System.out.println("前序遍历结果(非递归):" + tree.prorderTraversalRec(root));
+        System.out.println("层序遍历按层返回从左至右所有的节点:" + tree.levelOrderTraversal(root));
+        System.out.println("层序返回每层中最大节点的值:" + tree.largestValuesOfEachLevel(root));
+
+        System.out.println("前序遍历结果(递归):" + tree.preorderTraversalRec(root));
+        System.out.println("前序遍历结果(非递归):" + tree.preorderTraversalRec(root));
         System.out.println("中序遍历结果(递归):" + tree.inorderTraversal(root));
         System.out.println("中序遍历结果(非递归-栈):" + tree.inorderTraversal(root));
     }
