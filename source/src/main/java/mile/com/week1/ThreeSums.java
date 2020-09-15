@@ -86,14 +86,57 @@ public class ThreeSums {
         return new ArrayList<>(result);
     }
 
+    /**
+     * 四元组
+     * @param nums
+     * @param target
+     * @return
+     */
+    public List<List<Integer>> fourSum(int[] nums, int target) {
+        if (null == nums || nums.length < 4) {
+            return new ArrayList<>();
+        }
+
+        Set<List<Integer>> result = new HashSet<List<Integer>>();
+        Arrays.sort(nums);
+
+        for(int i=0; i<nums.length - 3; i++){
+            for(int j=i+1; j<nums.length - 2; j++){
+                int tmpTarget = target - nums[i] - nums[j];
+                for(int k=j+1,h=nums.length -1; k<h; ){
+                    if(nums[k] + nums[h] == tmpTarget){
+                        List<Integer> currThreeSumList = Arrays.asList(nums[i],nums[j],nums[k],nums[h]);
+                        result.add(currThreeSumList);
+                        //当前四元组符合要求 继续寻找下一个四元组 直至j>=k
+                         k++;
+                         h--;
+                    }
+                    else if(nums[k] + nums[h] < tmpTarget){
+                        k++;
+                    }
+                    else if(nums[k] + nums[h] > tmpTarget){
+                        h--;
+                    }
+                }
+            }
+        }
+
+        return new ArrayList<>(result);
+    }
+
 
     public static void main(String[] args){
-        Set<List<Integer>> result = new HashSet<List<Integer>>();
-        result.add(Arrays.asList(0,0,1));
-        result.add(Arrays.asList(0,0,1));
-        result.add(Arrays.asList(0,1,0));
-        System.out.println(result);
+//        Set<List<Integer>> result = new HashSet<List<Integer>>();
+//        result.add(Arrays.asList(0,0,1));
+//        result.add(Arrays.asList(0,0,1));
+//        result.add(Arrays.asList(0,1,0));
+//        System.out.println(result);
+//
+//        System.out.println(threeSums2(new int[]{-2,0,1,1,2}));
 
-        System.out.println(threeSums2(new int[]{-2,0,1,1,2}));
+        ThreeSums threeSums = new ThreeSums();
+        System.out.println(threeSums.fourSum(new int[]{1,0,-1,0,-2,2},0));
+
+
     }
 }
